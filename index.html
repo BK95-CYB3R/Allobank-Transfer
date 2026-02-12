@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Struk Allo Bank</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --allo-yellow: #fdb94e;
+            --success-green: #27ae60;
+            --ios-gray: #8e8e93;
+            --text-dark: #1c1c1e;
+            
+            /* Cyberpunk Panel Colors */
+            --cp-bg: #0d0221;
+            --cp-pink: #ff0055;
+            --cp-cyan: #00f2ff;
+            --cp-panel: #1a1a2e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--cp-bg); /* Body background diubah */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* --- AREA CAPTURE (Tetap seperti semula) --- */
+        #capture-area {
+            background-color: var(--allo-yellow);
+            width: 375px; 
+            min-height: 620px; 
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .receipt-card {
+            background: #ffffff;
+            width: 100%;
+            border-radius: 32px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px;
+        }
+
+        .header { padding: 35px 20px 15px; text-align: center; }
+        .check-container {
+            width: 65px; height: 65px; background-color: var(--success-green);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+        }
+        .check-container svg { width: 32px; height: 32px; stroke: white; stroke-width: 4; fill: none; }
+        .status-msg { color: var(--success-green); font-weight: 700; font-size: 20px; }
+        .amount { color: var(--text-dark); font-size: 40px; font-weight: 800; margin-bottom: 12px; }
+        .admin-badge {
+            display: inline-block; background-color: #f0f9f4; color: #2d2d2d;
+            padding: 6px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;
+        }
+
+        .divider { position: relative; height: 30px; display: flex; align-items: center; }
+        .notch { position: absolute; width: 28px; height: 28px; background-color: var(--allo-yellow); border-radius: 50%; z-index: 2; }
+        .n-left { left: -14px; } .n-right { right: -14px; }
+        .dashed-line { flex: 1; margin: 0 15px; border-top: 1.5px dashed #efeff4; }
+
+        .content { padding: 15px 25px 10px; flex-grow: 1; }
+        .row-main { display: flex; justify-content: space-between; margin-bottom: 25px; }
+        .label-bold { font-weight: 700; color: var(--text-dark); font-size: 15px; }
+        .date-text { color: var(--ios-gray); font-size: 13px; }
+        .info-group { margin-bottom: 20px; }
+        .small-label { color: var(--ios-gray); font-size: 12px; margin-bottom: 4px; }
+        .val-text { color: var(--text-dark); font-size: 15px; font-weight: 700; line-height: 1.4; }
+
+        /* --- PANEL EDIT (Cyberpunk Style) --- */
+        .editor-panel {
+            background: var(--cp-panel);
+            width: 375px;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--cp-pink);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+        }
+
+        .editor-panel h3 {
+            color: var(--cp-cyan);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .warning-box {
+            background: rgba(255, 0, 85, 0.1);
+            border-left: 3px solid var(--cp-pink);
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #ffb3c1;
+        }
+
+        .group { margin-bottom: 12px; }
+        .group label { display: block; font-size: 11px; color: var(--cp-cyan); margin-bottom: 4px; text-transform: uppercase; }
+        .group input, .group select {
+            width: 100%; padding: 12px; background: #0d0221; border: 1px solid #444; border-radius: 8px; font-size: 14px; color: #fff; outline: none;
+        }
+        .group input:focus { border-color: var(--cp-cyan); }
+
+        .btn-download {
+            width: 100%; padding: 16px; background: var(--cp-pink); color: #fff;
+            border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+            cursor: pointer; margin-top: 10px; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="capture-area">
+        <div class="receipt-card">
+            <div class="header">
+                <div class="check-container">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="status-msg">Berhasil!</div>
+                <div class="amount" id="d-amount">Rp200.000</div>
+                <div class="admin-badge">Bebas Biaya Admin!</div>
+            </div>
+
+            <div class="divider">
+                <div class="notch n-left"></div>
+                <div class="dashed-line"></div>
+                <div class="notch n-right"></div>
+            </div>
+
+            <div class="content">
+                <div class="row-main">
+                    <div class="label-bold">Dompet Allo</div>
+                    <div class="date-text" id="d-time">--</div>
+                </div>
+
+                <div class="info-group">
+                    <p class="small-label">Penerima</p>
+                    <p class="val-text" id="d-penerima">MR.DUBAI</p>
+                    <p class="val-text" id="d-bank" style="font-weight: 500; color: #555;">BANK BRI - ********9999</p>
+                </div>
+
+                <div class="info-group">
+                    <p class="small-label">Pengirim</p>
+                    <p class="val-text" id="d-pengirim">BY.BAYUDUBAI</p>
+                </div>
+
+                <div class="info-group">
+                    <p class="small-label">Pesan</p>
+                    <p class="val-text" id="d-pesan">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-panel">
+        <h3>System Control</h3>
+        
+        <div class="warning-box">
+            <strong>⚠️ PRINGATAN:</strong> Data ini rahasia. Jangan disebarkan! <br> WM_ID: <strong>By.Bayu Dubai</strong>
+        </div>
+        
+        <div class="group">
+            <label>Nominal Transfer</label>
+            <input type="number" id="i-amount" placeholder="Contoh: 500000" oninput="update()">
+        </div>
+
+        <div class="group">
+            <label>Nama Penerima</label>
+            <input type="text" id="i-penerima" value="MR.DUBAI" oninput="update()">
+        </div>
+
+        <div class="group">
+            <label>Pilih Bank</label>
+            <select id="i-bank-list" onchange="update()">
+                <option value="BANK BCA">BANK BCA</option>
+                <option value="BANK BRI" selected>BANK BRI</option>
+                <option value="BANK MANDIRI">BANK MANDIRI</option>
+                <option value="BANK BNI">BANK BNI</option>
+                <option value="BANK SYARIAH INDONESIA">BANK SYARIAH INDONESIA</option>
+                <option value="CIMB NIAGA">CIMB NIAGA</option>
+                <option value="BANK PERMATA">BANK PERMATA</option>
+                <option value="BANK DANAMON">BANK DANAMON</option>
+                <option value="BANK BTN">BANK BTN</option>
+                <option value="PANIN BANK">PANIN BANK</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>Nomor Rekening</label>
+            <input type="text" id="i-rek" value="********9999" oninput="update()">
+        </div>
+
+        <div class="group">
+            <label>Nama Pengirim</label>
+            <input type="text" id="i-pengirim" value="BY.BAYUDUBAI" oninput="update()">
+        </div>
+
+        <div class="group">
+            <label>Pesan</label>
+            <input type="text" id="i-pesan" value="--" oninput="update()">
+        </div>
+
+        <button class="btn-download" onclick="downloadImage()">Download Struk</button>
+    </div>
+
+    <script>
+        function update() {
+            const nominal = document.getElementById('i-amount').value;
+            if(nominal) {
+                document.getElementById('d-amount').innerText = 'Rp' + Number(nominal).toLocaleString('id-ID');
+            }
+
+            document.getElementById('d-penerima').innerText = document.getElementById('i-penerima').value.toUpperCase();
+            document.getElementById('d-pengirim').innerText = document.getElementById('i-pengirim').value.toUpperCase();
+            document.getElementById('d-pesan').innerText = document.getElementById('i-pesan').value;
+            
+            const bank = document.getElementById('i-bank-list').value;
+            const rek = document.getElementById('i-rek').value;
+            document.getElementById('d-bank').innerText = bank + " - " + rek;
+        }
+
+        function setRealTime() {
+            const now = new Date();
+            const options = { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta' };
+            document.getElementById('d-time').innerText = now.toLocaleString('id-ID', options).replace(/\./g, ':');
+        }
+
+        async function downloadImage() {
+            const area = document.getElementById('capture-area');
+            const canvas = await html2canvas(area, { 
+                scale: 3,
+                backgroundColor: '#fdb94e',
+                useCORS: true,
+                logging: false,
+                height: area.offsetHeight 
+            });
+            
+            const link = document.createElement('a');
+            link.download = 'Screenshot_AlloBank_Full.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        window.onload = () => {
+            setRealTime();
+            update();
+        };
+    </script>
+</body>
+</html>
