@@ -3,268 +3,545 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor Struk Allo Bank</title>
+    <title>Resi Allo Bank - BY MISTER X</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
-        :root {
-            --allo-yellow: #fdb94e;
-            --success-green: #27ae60;
-            --ios-gray: #8e8e93;
-            --text-dark: #1c1c1e;
-            
-            /* Cyberpunk Panel Colors */
-            --cp-bg: #0d0221;
-            --cp-pink: #ff0055;
-            --cp-cyan: #00f2ff;
-            --cp-panel: #1a1a2e;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: var(--cp-bg); /* Body background diubah */
+            background-color: #e4e6eb; 
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* --- AREA CAPTURE (Tetap seperti semula) --- */
-        #capture-area {
-            background-color: var(--allo-yellow);
-            width: 375px; 
-            min-height: 620px; 
+            justify-content: center;
+            align-items: flex-start;
             padding: 30px 20px;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        /* --- AREA RESI (FIXED RASIO 9:16 | 360x640px) --- */
+        #capture-area {
+            width: 360px; 
+            height: 640px; 
+            padding: 20px 15px 10px; 
+            background: url('bg.png') center/cover no-repeat;
+            background-color: #F8B33E; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Kontainer Atas (Logo, Kartu, Tombol Aksi) */
+        .upper-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 12px; 
+        }
+
+        .logo-container img {
+            height: 24px; 
+            object-fit: contain;
+        }
+
+        /* --- KARTU RESI DENGAN POTONGAN LEBIH LEBAR --- */
+        .receipt-card {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 12px; 
+            border-radius: 12px;
+            
+            /* Bolongan diperlebar menjadi 20px */
+            background-color: transparent;
+            background-image: 
+                radial-gradient(circle at 0px 185px, transparent 20px, #FFFFFF 20.5px),
+                radial-gradient(circle at 100% 185px, transparent 20px, #FFFFFF 20.5px);
+            background-size: 51% 100%, 51% 100%;
+            background-position: left top, right top;
+            background-repeat: no-repeat;
+            
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+        }
+
+        .card-top {
+            height: 185px; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            overflow: hidden;
+            justify-content: center;
+            padding: 5px 15px 0; 
         }
 
-        .receipt-card {
-            background: #ffffff;
+        .card-top img {
+            width: 48px; 
+            height: 48px;
+            margin-bottom: 10px;
+        }
+
+        .status-text {
+            color: #1FB452;
+            font-weight: 700;
+            font-size: 14.5px;
+            margin-bottom: 6px;
+        }
+
+        .amount {
+            color: #222222;
+            font-weight: 800;
+            font-size: 28px; 
+            margin-bottom: 10px;
+            letter-spacing: -0.8px;
+        }
+
+        .badge-free {
+            background-color: #E6F7ED;
+            color: #111111;
+            font-size: 10.5px;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .divider {
+            border-top: 1.5px dashed #D0D0D0;
+            /* Margin diperlebar ke 22px agar garis putus-putus tidak menabrak bolongan 20px */
+            margin: 0 22px 12px; 
+        }
+
+        .card-bottom {
+            padding: 0 18px;
+        }
+
+        .row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .row-header .wallet {
+            font-weight: 600;
+            color: #222;
+            font-size: 12px;
+        }
+
+        .row-header .date {
+            color: #888;
+            font-size: 11.5px;
+        }
+
+        .info-group {
+            margin-bottom: 10px; 
+        }
+
+        .info-group .label {
+            color: #999999;
+            font-size: 10px;
+            margin-bottom: 2px;
+            font-weight: 400;
+        }
+
+        .info-group .value {
+            color: #111111;
+            font-size: 11.5px;
+            font-weight: 600;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        #pesan-text {
+            text-transform: none; 
+        }
+
+        .divider-thin {
+            border-top: 1px dotted #D0D0D0;
+            margin: 12px 0;
+        }
+
+        .detail-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #222;
+            font-size: 11.5px;
+        }
+
+        .detail-toggle svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* --- Tombol Aksi --- */
+        .btn {
+            background-color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            padding: 12px; 
+            font-size: 12px;
+            font-weight: 500;
+            color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            fill: #333;
+        }
+
+        .btn-full {
             width: 100%;
-            border-radius: 32px;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .fav-icon {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-half {
+            flex: 1;
+        }
+
+        /* --- AREA BAWAH (Tombol Selesai) --- */
+        .bottom-area {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            padding-bottom: 20px;
+            align-items: center;
+            padding-bottom: 5px;
         }
 
-        .header { padding: 35px 20px 15px; text-align: center; }
-        .check-container {
-            width: 65px; height: 65px; background-color: var(--success-green);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
-        }
-        .check-container svg { width: 32px; height: 32px; stroke: white; stroke-width: 4; fill: none; }
-        .status-msg { color: var(--success-green); font-weight: 700; font-size: 20px; }
-        .amount { color: var(--text-dark); font-size: 40px; font-weight: 800; margin-bottom: 12px; }
-        .admin-badge {
-            display: inline-block; background-color: #f0f9f4; color: #2d2d2d;
-            padding: 6px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;
-        }
-
-        .divider { position: relative; height: 30px; display: flex; align-items: center; }
-        .notch { position: absolute; width: 28px; height: 28px; background-color: var(--allo-yellow); border-radius: 50%; z-index: 2; }
-        .n-left { left: -14px; } .n-right { right: -14px; }
-        .dashed-line { flex: 1; margin: 0 15px; border-top: 1.5px dashed #efeff4; }
-
-        .content { padding: 15px 25px 10px; flex-grow: 1; }
-        .row-main { display: flex; justify-content: space-between; margin-bottom: 25px; }
-        .label-bold { font-weight: 700; color: var(--text-dark); font-size: 15px; }
-        .date-text { color: var(--ios-gray); font-size: 13px; }
-        .info-group { margin-bottom: 20px; }
-        .small-label { color: var(--ios-gray); font-size: 12px; margin-bottom: 4px; }
-        .val-text { color: var(--text-dark); font-size: 15px; font-weight: 700; line-height: 1.4; }
-
-        /* --- PANEL EDIT (Cyberpunk Style) --- */
-        .editor-panel {
-            background: var(--cp-panel);
-            width: 375px;
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid var(--cp-pink);
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+        .btn-selesai {
+            width: 100%;
+            background-color: #FFFFFF; 
+            color: #111;
+            border: none;
+            padding: 13px;
+            border-radius: 30px; 
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
         }
 
-        .editor-panel h3 {
-            color: var(--cp-cyan);
-            text-align: center;
-            margin-bottom: 15px;
+        /* --- PANEL EDIT --- */
+        .panel-container {
+            width: 100%;
+            max-width: 350px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #eaeaea;
+        }
+
+        .panel-title {
             font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #F8B33E;
+            padding-bottom: 10px;
         }
 
-        .warning-box {
-            background: rgba(255, 0, 85, 0.1);
-            border-left: 3px solid var(--cp-pink);
-            padding: 10px;
-            margin-bottom: 15px;
+        .input-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
             font-size: 12px;
-            color: #ffb3c1;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
         }
 
-        .group { margin-bottom: 12px; }
-        .group label { display: block; font-size: 11px; color: var(--cp-cyan); margin-bottom: 4px; text-transform: uppercase; }
-        .group input, .group select {
-            width: 100%; padding: 12px; background: #0d0221; border: 1px solid #444; border-radius: 8px; font-size: 14px; color: #fff; outline: none;
+        .input-group input[type="text"], .input-group select {
+            padding: 10px 12px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
         }
-        .group input:focus { border-color: var(--cp-cyan); }
 
-        .btn-download {
-            width: 100%; padding: 16px; background: var(--cp-pink); color: #fff;
-            border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
-            cursor: pointer; margin-top: 10px; text-transform: uppercase;
+        .input-group input[type="text"]:focus, .input-group select:focus {
+            outline: none;
+            border-color: #F8B33E;
+        }
+
+        .btn-save {
+            width: 100%;
+            background-color: #1FB452;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            background-color: #1aa048;
         }
     </style>
 </head>
 <body>
 
     <div id="capture-area">
-        <div class="receipt-card">
-            <div class="header">
-                <div class="check-container">
-                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        
+        <div class="upper-content">
+            <div class="logo-container">
+                <img src="logo.png" alt="Allo Bank">
+            </div> 
+
+            <div class="receipt-card">
+                <div class="card-top">
+                    <img src="centang.png" alt="Berhasil">
+                    <div class="status-text">Berhasil!</div>
+                    <div class="amount" id="nominal-text">Rp250.000</div>
+                    <div class="badge-free">Bebas Biaya Admin!</div>
                 </div>
-                <div class="status-msg">Berhasil!</div>
-                <div class="amount" id="d-amount">Rp200.000</div>
-                <div class="admin-badge">Bebas Biaya Admin!</div>
+
+                <div class="divider"></div>
+
+                <div class="card-bottom">
+                    <div class="row-header">
+                        <span class="wallet">Dompet Allo</span>
+                        <span class="date" id="waktu-text"></span>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="label">Penerima</div>
+                        <div class="value">
+                            <span id="penerima-nama">MISTER X</span><br>
+                            <span id="penerima-bank">BANK BRI</span> - <span id="penerima-rekening">2018••••1508</span>
+                        </div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="label">Pengirim</div>
+                        <div class="value" id="pengirim-nama">MISTER X</div>
+                    </div>
+
+                    <div class="info-group">
+                        <div class="label">Pesan</div>
+                        <div class="value" id="pesan-text">CIDUKAN MISTER X</div>
+                    </div>
+
+                    <div class="divider-thin"></div>
+
+                    <div class="detail-toggle">
+                        <span>Detail</span>
+                        <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" fill="#000"/></svg>
+                    </div>
+                </div>
             </div>
 
-            <div class="divider">
-                <div class="notch n-left"></div>
-                <div class="dashed-line"></div>
-                <div class="notch n-right"></div>
-            </div>
+            <button class="btn btn-full">
+                <img src="fav.png" alt="Favorites" class="fav-icon">
+                Tambah akun ke Favorites
+            </button>
 
-            <div class="content">
-                <div class="row-main">
-                    <div class="label-bold">Dompet Allo</div>
-                    <div class="date-text" id="d-time">--</div>
-                </div>
-
-                <div class="info-group">
-                    <p class="small-label">Penerima</p>
-                    <p class="val-text" id="d-penerima">MISTER X</p>
-                    <p class="val-text" id="d-bank" style="font-weight: 500; color: #555;">BANK BRI - ********9999</p>
-                </div>
-
-                <div class="info-group">
-                    <p class="small-label">Pengirim</p>
-                    <p class="val-text" id="d-pengirim">MISTER X</p>
-                </div>
-
-                <div class="info-group">
-                    <p class="small-label">Pesan</p>
-                    <p class="val-text" id="d-pesan">--</p>
-                </div>
+            <div class="btn-group">
+                <button class="btn btn-half">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                    Bantuan
+                </button>
+                <button class="btn btn-half">
+                    <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                    Bagikan
+                </button>
             </div>
         </div>
+
+        <div class="bottom-area">
+            <button class="btn-selesai">Selesai</button>
+        </div>
+
     </div>
 
-    <div class="editor-panel">
-        <h3>System Control</h3>
-        
-        <div class="warning-box">
-            <strong>⚠️ PRINGATAN:</strong> Data ini rahasia. Jangan disebarkan! <br> WM_ID: <strong>MISTER X</strong>
-        </div>
-        
-        <div class="group">
-            <label>Nominal Transfer</label>
-            <input type="number" id="i-amount" placeholder="Contoh: 500000" oninput="update()">
+    <div class="panel-container">
+        <div class="panel-title">🛠️ Panel Edit BY MISTER X</div>
+
+        <div class="input-group">
+            <label>Waktu Transaksi (Otomatis WIB):</label>
+            <input type="text" id="input-waktu">
         </div>
 
-        <div class="group">
-            <label>Nama Penerima</label>
-            <input type="text" id="i-penerima" value="MISTER X" oninput="update()">
+        <div class="input-group">
+            <label>Nominal Transfer (Cukup ketik angka):</label>
+            <input type="text" id="input-nominal" value="Rp250.000">
         </div>
 
-        <div class="group">
-            <label>Pilih Bank</label>
-            <select id="i-bank-list" onchange="update()">
+        <div class="input-group">
+            <label>Nama Penerima:</label>
+            <input type="text" id="input-penerima" value="MISTER X">
+        </div>
+
+        <div class="input-group">
+            <label>Bank Penerima:</label>
+            <select id="input-bank">
+                <option value="BANK BRI">BANK BRI</option>
                 <option value="BANK BCA">BANK BCA</option>
-                <option value="BANK BRI" selected>BANK BRI</option>
                 <option value="BANK MANDIRI">BANK MANDIRI</option>
                 <option value="BANK BNI">BANK BNI</option>
-                <option value="BANK SYARIAH INDONESIA">BANK SYARIAH INDONESIA</option>
-                <option value="CIMB NIAGA">CIMB NIAGA</option>
-                <option value="BANK PERMATA">BANK PERMATA</option>
-                <option value="BANK DANAMON">BANK DANAMON</option>
-                <option value="BANK BTN">BANK BTN</option>
-                <option value="PANIN BANK">PANIN BANK</option>
+                <option value="BANK SYARIAH INDONESIA">BANK SYARIAH INDONESIA (BSI)</option>
             </select>
         </div>
 
-        <div class="group">
-            <label>Nomor Rekening</label>
-            <input type="text" id="i-rek" value="********9999" oninput="update()">
+        <div class="input-group">
+            <label>Nomor Rekening (Otomatis disensor):</label>
+            <input type="text" id="input-rekening">
         </div>
 
-        <div class="group">
-            <label>Nama Pengirim</label>
-            <input type="text" id="i-pengirim" value="MISTER X" oninput="update()">
+        <div class="input-group">
+            <label>Nama Pengirim:</label>
+            <input type="text" id="input-pengirim" value="MISTER X">
         </div>
 
-        <div class="group">
-            <label>Pesan</label>
-            <input type="text" id="i-pesan" value="--" oninput="update()">
+        <div class="input-group">
+            <label>Pesan:</label>
+            <input type="text" id="input-pesan" value="CIDUKAN MISTER X">
         </div>
 
-        <button class="btn-download" onclick="downloadImage()">Download Struk</button>
+        <button class="btn-save" onclick="downloadImage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Simpan Gambar Full HD
+        </button>
     </div>
 
     <script>
-        function update() {
-            const nominal = document.getElementById('i-amount').value;
-            if(nominal) {
-                document.getElementById('d-amount').innerText = 'Rp' + Number(nominal).toLocaleString('id-ID');
+        // Fungsi generate No Rekening Acak
+        function randomizeRekening() {
+            // Acak 4 digit depan, 4 digit tengah (fiktif), dan 4 digit belakang
+            let front = Math.floor(1000 + Math.random() * 9000);
+            let middle = Math.floor(1000 + Math.random() * 9000); 
+            let back = Math.floor(1000 + Math.random() * 9000);
+            
+            let fullRek = front.toString() + middle.toString() + back.toString();
+            
+            document.getElementById('input-rekening').value = fullRek;
+            document.getElementById('penerima-rekening').innerText = front + '••••' + back;
+        }
+
+        function setWaktuJakarta() {
+            const sekarang = new Date();
+            const opsiTanggal = { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' };
+            const opsiWaktu = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: false };
+            
+            let tanggalStr = sekarang.toLocaleDateString('id-ID', opsiTanggal); 
+            let waktuStr = sekarang.toLocaleTimeString('id-ID', opsiWaktu).replace('.', ':'); 
+            
+            const waktuFinal = `${tanggalStr}, ${waktuStr}`;
+            
+            document.getElementById('waktu-text').innerText = waktuFinal;
+            document.getElementById('input-waktu').value = waktuFinal;
+        }
+
+        window.onload = function() {
+            setWaktuJakarta();
+            randomizeRekening(); // Auto acak rek saat direfresh
+        };
+
+        // Auto-Format Rupiah di kolom Nominal
+        document.getElementById('input-nominal').addEventListener('input', function() {
+            let angka = this.value.replace(/[^0-9]/g, '');
+            
+            if (angka === '') {
+                this.value = '';
+                document.getElementById('nominal-text').innerText = 'Rp0';
+                return;
             }
 
-            document.getElementById('d-penerima').innerText = document.getElementById('i-penerima').value.toUpperCase();
-            document.getElementById('d-pengirim').innerText = document.getElementById('i-pengirim').value.toUpperCase();
-            document.getElementById('d-pesan').innerText = document.getElementById('i-pesan').value;
+            let formatRupiah = new Intl.NumberFormat('id-ID').format(angka);
+            this.value = 'Rp' + formatRupiah;
+            document.getElementById('nominal-text').innerText = this.value;
+        });
+
+        // Masking Rekening saat diketik manual
+        document.getElementById('input-rekening').addEventListener('input', function() { 
+            let val = this.value;
+            // Jika panjang lebih dari 8 digit, beri sensor
+            if(val.length >= 8) {
+                let front = val.substring(0, 4);
+                let back = val.substring(val.length - 4);
+                document.getElementById('penerima-rekening').innerText = front + '••••' + back;
+            } else {
+                document.getElementById('penerima-rekening').innerText = val; // Tampilkan apa adanya jika masih pendek
+            }
+        });
+
+        // Listener Edit Real-Time
+        document.getElementById('input-waktu').addEventListener('input', function() { document.getElementById('waktu-text').innerText = this.value; });
+        document.getElementById('input-penerima').addEventListener('input', function() { document.getElementById('penerima-nama').innerText = this.value; });
+        document.getElementById('input-bank').addEventListener('change', function() { document.getElementById('penerima-bank').innerText = this.value; });
+        document.getElementById('input-pengirim').addEventListener('input', function() { document.getElementById('pengirim-nama').innerText = this.value; });
+        document.getElementById('input-pesan').addEventListener('input', function() { document.getElementById('pesan-text').innerText = this.value; });
+
+        function downloadImage() {
+            const element = document.getElementById('capture-area');
+            const saveBtn = document.querySelector('.btn-save');
+            const originalText = saveBtn.innerHTML;
             
-            const bank = document.getElementById('i-bank-list').value;
-            const rek = document.getElementById('i-rek').value;
-            document.getElementById('d-bank').innerText = bank + " - " + rek;
-        }
+            saveBtn.innerHTML = "Memproses...";
+            saveBtn.style.backgroundColor = "#888";
 
-        function setRealTime() {
-            const now = new Date();
-            const options = { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta' };
-            document.getElementById('d-time').innerText = now.toLocaleString('id-ID', options).replace(/\./g, ':');
-        }
-
-        async function downloadImage() {
-            const area = document.getElementById('capture-area');
-            const canvas = await html2canvas(area, { 
-                scale: 3,
-                backgroundColor: '#fdb94e',
+            html2canvas(element, {
+                scale: 3, 
                 useCORS: true,
-                logging: false,
-                height: area.offsetHeight 
+                backgroundColor: null,
+            }).then((canvas) => {
+                const imageURL = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = 'Resi_AlloBank_ByMisterX.png';
+                link.href = imageURL;
+                link.click();
+                
+                saveBtn.innerHTML = originalText;
+                saveBtn.style.backgroundColor = "#1FB452";
+            }).catch(err => {
+                console.error("Gagal menyimpan:", err);
+                alert("Gagal menyimpan gambar. Pastikan bg.png, logo.png, dan fav.png ada di folder yang sama.");
+                saveBtn.innerHTML = originalText;
+                saveBtn.style.backgroundColor = "#1FB452";
             });
-            
-            const link = document.createElement('a');
-            link.download = 'Screenshot_AlloBank_Full.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
         }
-
-        window.onload = () => {
-            setRealTime();
-            update();
-        };
     </script>
 </body>
 </html>
